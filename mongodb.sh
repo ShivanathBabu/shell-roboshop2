@@ -31,7 +31,7 @@ then
  fi
 }
 
-cp mongo.repo /etc/yum.repos.d/mongodb.repo
+cp mogo.repo /etc/yum.repos.d/mongodb.repo
 validate $? "Copying Mongodb repo"
 
 dnf install mongodb-org-y
