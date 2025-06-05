@@ -59,7 +59,7 @@ validate $? "remove default content"
 cp $script_dir/nginx.conf /etc/nginx/nginx.conf
 VALIDATE $? "Copying nginx.conf"
 
-systemctl restart nginx &>>$Log_file
+systemctl restart nginx 
 validate $? "restarting nginx" 
 
 
