@@ -62,7 +62,7 @@ cp $script_dir/nginx.conf /etc/nginx/nginx.conf
 validate $? "Copying nginx.conf"
 
 systemctl restart nginx 
-validate $? "restarting nginx" 
+validate $? "Restarting nginx" 
 
 
 
