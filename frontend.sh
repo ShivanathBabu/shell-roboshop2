@@ -1,4 +1,5 @@
 #!/bin/bash
+
 userid=$(id -u)
 r="\e[31m"
 g="\e[32m"
@@ -39,11 +40,11 @@ validate $? "enabling nginx"
 dnf install nginx -y $>>$Log_file
 validate $? "install nginx"
 
-systemctl enable nginx $>>$Log_file
-systemctl start nginx  $>>$Log_file
+systemctl enable nginx &>>$Log_file
+systemctl start nginx  &>>$Log_file
 validate $? "starting nginx"
 
-rm -rf /usr/share/nginx/html/* $>>$Log_file
+rm -rf /usr/share/nginx/html/* &>>$Log_file
 validate $? "removing default content"
 
 curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$Log_file
