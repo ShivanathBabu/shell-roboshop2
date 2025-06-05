@@ -34,17 +34,17 @@ then
 cp mogo.repo /etc/yum.repos.d/mongodb.repo
 validate $? "Copying Mongodb repo"
 
-dnf install mongodb-org-y
+dnf install mongodb-org -y  &>>$Log_file
 validate $? "install mongodb"
 
-systemctl enable mongod
+systemctl enable mongod  &>>$Log_file
 validate $? "Enabling MongoDB"
 
-systemctl start mongod
+systemctl start mongod &>>$Log_file
 validate $? "starting mongod"
 
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>>$Log_file
 validate $? "Editing Mongod config file "
 
-systemctl restart mongod 
+systemctl restart mongod  &>>$Log_file
 validate  $? "Restarting MongoDB"
