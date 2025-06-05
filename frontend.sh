@@ -18,15 +18,15 @@ then
 echo -e "$r error: please run with root access $n" | tee -a $Log_file
 exit 1
 else
-echo -e "$g you are in root access" | tee -a $Log_file
+echo -e "$g you are in root access $n" | tee -a $Log_file
 fi
 
 validate(){
 if [ $1 -eq 0 ]
 then
- echo -e "$2.. $g success" | tee -a $Log_file
+ echo -e "$2.. $g success $n" | tee -a $Log_file
  else
- echo -e "$2... $r failure" | tee -a $Log_file
+ echo -e "$2... $r failure $n" | tee -a $Log_file
  exit 1
  fi
 }
