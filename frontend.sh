@@ -53,6 +53,7 @@ validate $? "downloading"
 
 cd /usr/share/nginx/html &>>$Log_file
 unzip  /tmp/frontend.zip
+validate $? "unzipping frontend"
 
 rm -rf /etc/nginx/nginx.conf &>>$Log_file
 validate $? "remove default content"
