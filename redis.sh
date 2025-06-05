@@ -34,7 +34,7 @@ then
 dnf module disable redis -y &>>$Log_file
 validate $? "disable default redis"
 
-dnf module enable redis :7 -y &>>$Log_file
+dnf module enable redis:7 -y &>>$Log_file
 validate $? "enabling redis"
 
 dnf install redis -y &>>$Log_file
