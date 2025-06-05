@@ -56,8 +56,8 @@ unzip ./tmp/frontend.zip
 rm -rf /etc/nginx/nginx.conf &>>$Log_file
 validate $? "remove default content"
 
-cp $script_dir/nginx.conf /etc/nginx/nginx.conf &>>$Log_file
-validate $? "copying nginx.conf"
+cp $script_dir/nginx.conf /etc/nginx/nginx.conf
+VALIDATE $? "Copying nginx.conf"
 
 systemctl restart nginx &>>$Log_file
 validate $? "restarting nginx" 
