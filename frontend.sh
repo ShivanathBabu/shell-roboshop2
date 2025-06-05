@@ -6,10 +6,10 @@ g="\e[32m"
 y="\e[33m"
 n="\e[0m"
 
-Logs_folder="/var/log/roboshop.log"
+Logs_folder="/var/log/roboshop-log"
 script_name=$( echo $0 | cut -d "." -f1)
 Log_file="$Logs_folder/$script_name.log"
-script_dir=$pwd
+script_dir=$PWD
 
 mkdir -p $Logs_folder
 
@@ -51,13 +51,13 @@ curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v
 validate $? "downloading"
 
 cd /usr/share/nginx/html &>>$Log_file
-unzip ./tmp/frontend.zip
+unzip  /tmp/frontend.zip
 
 rm -rf /etc/nginx/nginx.conf &>>$Log_file
 validate $? "remove default content"
 
 cp $script_dir/nginx.conf /etc/nginx/nginx.conf
-VALIDATE $? "Copying nginx.conf"
+validate $? "Copying nginx.conf"
 
 systemctl restart nginx 
 validate $? "restarting nginx" 
