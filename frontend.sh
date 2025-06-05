@@ -41,8 +41,9 @@ dnf install nginx -y &>>$Log_file
 validate $? "install nginx"
 
 systemctl enable nginx &>>$Log_file
-systemctl start nginx  
-validate $? "starting nginx"
+systemctl start nginx &>>$Log_file
+VALIDATE $? "Starting Nginx"
+
 
 rm -rf /usr/share/nginx/html/* &>>$Log_file
 validate $? "removing default content"
