@@ -48,7 +48,7 @@ validate $? "Starting Nginx"
 rm -rf /usr/share/nginx/html/* &>>$Log_file
 validate $? "removing default content"
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$Log_file
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip 
 validate $? "downloading"
 
 cd /usr/share/nginx/html &>>$Log_file
