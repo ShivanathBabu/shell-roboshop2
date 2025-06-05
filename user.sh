@@ -48,6 +48,11 @@ then
   else
   echo -e " already user exists $y skipping $n"
   fi
+mkdir -p /app
+validate $? "creating app directory"
+
+curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
+validate $? "unzipping user"
 
 rm -rf /app/*
 cd /app
