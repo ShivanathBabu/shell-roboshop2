@@ -30,10 +30,10 @@ then
  fi
 }
 
-dnf module disable nginx -y $>>$Log_file
+dnf module disable nginx -y &>>$Log_file
 validate $? "disable nginx"
 
-dnf module enable nginx:1.24 -y $>>$Log_file
+dnf module enable nginx:1.24 -y &>>$Log_file
 validate $? "enabling nginx"
 
 dnf install nginx -y $>>$Log_file
@@ -46,19 +46,19 @@ validate $? "starting nginx"
 rm -rf /usr/share/nginx/html/* $>>$Log_file
 validate $? "removing default content"
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip $>>$Log_file
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$Log_file
 validate $? "downloading"
 
-cd /usr/share/nginx/html $>>$Log_file
+cd /usr/share/nginx/html &>>$Log_file
 unzip ./tmp/frontend.zip
 
-rm -rf /etc/nginx/nginx.conf $>>$Log_file
+rm -rf /etc/nginx/nginx.conf &>>$Log_file
 validate $? "remove default content"
 
-cp $script_dir/nginx.conf /etc/nginx/nginx.conf $>>$Log_file
+cp $script_dir/nginx.conf /etc/nginx/nginx.conf &>>$Log_file
 validate $? "copying nginx.conf"
 
-systemctl restart nginx $>>$Log_file
+systemctl restart nginx &>>$Log_file
 validate $? "restarting nginx" 
 
 
