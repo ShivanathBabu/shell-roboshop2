@@ -21,7 +21,7 @@ else
 echo -e "$g you are in root access" | tee -a $Log_file
 fi
 
-validate() {
+validate(){
 if [ $1 -eq 0 ]
 then
  echo -e "$2.. $g success" | tee -a $Log_file
@@ -41,7 +41,7 @@ dnf install nginx -y $>>$Log_file
 validate $? "install nginx"
 
 systemctl enable nginx &>>$Log_file
-systemctl start nginx  &>>$Log_file
+systemctl start nginx  
 validate $? "starting nginx"
 
 rm -rf /usr/share/nginx/html/* &>>$Log_file
