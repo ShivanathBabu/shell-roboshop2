@@ -1,73 +1,85 @@
 #!/bin/bash
 
-userid=$(id -u)
-r="\e[31m"
-g="\e[32m"
-y="\e[33m"
-n="\e[0m"
+START_TIME=$(date +%s)
+USERID=$(id -u)
+R="\e[31m"  # RED
+G="\e[32m"  # GREEN
+Y="\e[33m"  # YELLOW
+N="\e[0m"   # RESET
 
-Logs_folder="/var/log/roboshop-log"
-script_name=$( echo $0 | cut -d "." -f1)
-Log_file="$Logs_folder/$script_name.log"
-script_dir=$PWD
+LOGS_FOLDER="/var/log/roboshop-logs"
+SCRIPT_NAME=$(basename "$0" | cut -d "." -f1)
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+SCRIPT_DIR=$PWD
 
-mkdir -p $Logs_folder
+mkdir -p $LOGS_FOLDER
+echo -e "$Y Script started at: $(date) $N" | tee -a $LOG_FILE
 
-if [ $userid -ne 0 ]
-then
-echo -e "$r error: please run with root access $n" | tee -a $Log_file
-exit 1
+# Check for root privileges
+if [ $USERID -ne 0 ]; then
+  echo -e "$R ERROR: Please run this script with root access. $N" | tee -a $LOG_FILE
+  exit 1
 else
-echo -e "$g you are in root access $n" | tee -a $Log_file
+  echo -e "$G You are running with root access. $N" | tee -a $LOG_FILE
 fi
 
-validate(){
-if [ $1 -eq 0 ]
-then
- echo -e "$2.. $g success $n" | tee -a $Log_file
- else
- echo -e "$2... $r failure $n" | tee -a $Log_file
- exit 1
- fi
+# Validate function for status checking
+VALIDATE() {
+  if [ $1 -eq 0 ]; then
+    echo -e "$2... $G SUCCESS $N" | tee -a $LOG_FILE
+  else
+    echo -e "$2... $R FAILURE $N" | tee -a $LOG_FILE
+    exit 1
+  fi
 }
 
-dnf module disable nodejs -y
-validate $? "disable nodejs"
+# Install NodeJS
+dnf module disable nodejs -y &>>$LOG_FILE
+VALIDATE $? "Disabling default NodeJS"
 
-dnf module enable nodejs:20 -y
-validate $? "enable nodejs"
+dnf module enable nodejs:20 -y &>>$LOG_FILE
+VALIDATE $? "Enabling NodeJS 20"
 
-dnf install nodejs -y
-validate $? "install nodejs"
+dnf install nodejs -y &>>$LOG_FILE
+VALIDATE $? "Installing NodeJS"
 
-id roboshop
-if [ $? -ne 0 ]
-then
-  useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
-  validate $? "creating roboshop user"
-  else
-  echo -e " already user exists $y skipping $n"
-  fi
+# Add roboshop user if not present
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+  useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+  VALIDATE $? "Creating roboshop system user"
+else
+  echo -e "$Y roboshop user already exists... SKIPPING $N" | tee -a $LOG_FILE
+fi
 
-mkdir -p /app &>>$Log_file
-validate $? "app directory"
+# Create /app directory
+mkdir -p /app &>>$LOG_FILE
+VALIDATE $? "Creating /app directory"
 
-curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
-validate $? "unzipping user"
+# Download and extract user code
+curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
+VALIDATE $? "Downloading user.zip"
 
-rm -rf /app/*
+rm -rf /app/* &>>$LOG_FILE
 cd /app
-unzip /tmp/user.zip
-validate $? "downloading userzip file"
+unzip /tmp/user.zip &>>$LOG_FILE
+VALIDATE $? "Extracting user.zip"
 
-npm install &>>$Log_file
-validate $? "Installing Dependencies"
+# Install dependencies
+npm install &>>$LOG_FILE
+VALIDATE $? "Installing NodeJS dependencies"
 
-cp $script_dir/user.service /etc/systemd/system/user.service
-validate $? "copying user.service"
+# Copy systemd service file
+cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service &>>$LOG_FILE
+VALIDATE $? "Copying user.service file"
 
-systemctl daemon-reload
-systemctl enable user
-systemctl start user
-validate $? "starting user"
+# Enable and start service
+systemctl daemon-reload &>>$LOG_FILE
+systemctl enable user &>>$LOG_FILE
+systemctl start user &>>$LOG_FILE
+VALIDATE $? "Starting user service"
 
+# Completion log
+END_TIME=$(date +%s)
+TOTAL_TIME=$((END_TIME - START_TIME))
+echo -e "$G Script completed successfully in $TOTAL_TIME seconds. $N" | tee -a $LOG_FILE
