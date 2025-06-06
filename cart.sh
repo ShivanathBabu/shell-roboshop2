@@ -67,7 +67,7 @@ VALIDATE $? "Installing dependencies"
 npm install
 VALIDATE $? "installing npm"
 
-cp $script_dir/cart.service  /etc/systemd/system/cart.service
+cp $SCRIPT_DIR/cart.service  /etc/systemd/system/cart.service
 VALIDATE $? "copying Downloading"
 
 systemctl daemon-reload
