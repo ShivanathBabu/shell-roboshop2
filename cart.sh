@@ -1,71 +1,76 @@
 #!/bin/bash
 
-userid=$(id -u)
-r="\e[31m"
-g="\e[32m"
-y="\e[33m"
-n="\e[0m"
+START_TIME=$(date +%s)
+USERID=$(id -u)
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
+LOGS_FOLDER="/var/log/roboshop-logs"
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+SCRIPT_DIR=$PWD
 
-Logs_folder="/var/log/roboshop-log"
-script_name=$( echo $0 | cut -d "." -f1)
-Log_file="$Logs_folder/$script_name.log"
-script_dir=$PWD
+mkdir -p $LOGS_FOLDER
+echo "Script started executing at: $(date)" | tee -a $LOG_FILE
 
-mkdir -p $Logs_folder
-
-if [ $userid -ne 0 ]
+# check the user has root priveleges or not
+if [ $USERID -ne 0 ]
 then
-echo -e "$r error: please run with root access $n" | tee -a $Log_file
-exit 1
+    echo -e "$R ERROR:: Please run this script with root access $N" | tee -a $LOG_FILE
+    exit 1 #give other than 0 upto 127
 else
-echo -e "$g you are in root access $n" | tee -a $Log_file
+    echo "You are running with root access" | tee -a $LOG_FILE
 fi
 
-validate(){
-if [ $1 -eq 0 ]
-then
- echo -e "$2.. $g success $n" | tee -a $Log_file
- else
- echo -e "$2... $r failure $n" | tee -a $Log_file
- exit 1
- fi
+# validate functions takes input as exit status, what command they tried to install
+VALIDATE(){
+    if [ $1 -eq 0 ]
+    then
+        echo -e "$2 is ... $G SUCCESS $N" | tee -a $LOG_FILE
+    else
+        echo -e "$2 is ... $R FAILURE $N" | tee -a $LOG_FILE
+        exit 1
+    fi
 }
 
-dnf module disable nodejs -y &>>$Log_file
-validate $? "disable nodejs"
+dnf module disable nodejs -y &>>$LOG_FILE
+VALIDATE $? "Disabling default nodejs"
 
-dnf module enable nodejs:20 -y &>>$Log_file
-validate $? "enable nodejs"
+dnf module enable nodejs:20 -y &>>$LOG_FILE
+VALIDATE $? "Enabling nodejs:20"
 
-dnf install nodejs -y &>>$Log_file
-validate $? "install nodejs"
+dnf install nodejs -y &>>$LOG_FILE
+VALIDATE $? "Installing nodejs:20"
+
 
 id roboshop
 if [ $? -ne 0 ]
 then 
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$Log_file
-validate $? "user create"
+VALIDATE $? "user create"
 else
-echo -e "already user create $y skipping $n"
+echo -e "already user create $Y skipping $N"
 fi
 
-mkdir -r /app
-validate $? "creating app directory"
+mkdir -p /app
+VALIDATE $? "creating app directory"
 
 curl -o /tmp//cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$Log_file
-validate $? "downloading"
+VALIDATE $? "downloading"
 
 rm -rf /app/*
 cd /app
 unzip /tmp/cart.zip &>>$Log_file
-validate $? "Installing dependencies"
+VALIDATE $? "Installing dependencies"
 
 npm install
-validate $? "installing npm"
+VALIDATE $? "installing npm"
 
 cp $script_dir/cart.service  /etc/systemd/system/cart.service
-validate $? "copying Downloading"
+VALIDATE $? "copying Downloading"
 
 systemctl daemon-reload
 systemctl enable cart
 systemctl start cart
+VALIDATE $? "starting cart"
