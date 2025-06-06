@@ -48,6 +48,7 @@ then
   else
   echo -e " already user exists $y skipping $n"
   fi
+
 mkdir -p /app
 validate $? "creating app directory"
 
