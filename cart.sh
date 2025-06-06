@@ -61,7 +61,7 @@ VALIDATE $? "downloading"
 
 rm -rf /app/*
 cd /app
-unzip /tmp/cart.zip &>>$Log_file
+unzip /tmp/cart.zip &>>$LOG_FILE
 VALIDATE $? "Installing dependencies"
 
 npm install
