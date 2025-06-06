@@ -47,7 +47,7 @@ VALIDATE $? "Installing nodejs:20"
 id roboshop
 if [ $? -ne 0 ]
 then 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$Log_file
+useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
 VALIDATE $? "user create"
 else
 echo -e "already user create $Y skipping $N"
@@ -56,7 +56,7 @@ fi
 mkdir -p /app
 VALIDATE $? "creating app directory"
 
-curl -o /tmp//cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$Log_file
+curl -o /tmp//cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$LOG_FILE
 VALIDATE $? "downloading"
 
 rm -rf /app/*
