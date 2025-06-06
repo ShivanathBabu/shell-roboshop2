@@ -59,6 +59,9 @@ cd /app
 unzip /tmp/user.zip
 validate $? "downloading userzip file"
 
+npm install &>>$Log_file
+validate $? "Installing Dependencies"
+
 cp $script_dir/user.service /etc/systemd/system/user.service
 validate $? "copying user.service"
 
